@@ -18,6 +18,7 @@ var femaleText              = ""
 var localText               = ""
 var localValue              = "(北海道・東北)"
 var joinedLocal             = ""
+var splitText               = []
 
 /*==================== 定数 ====================*/
 // 定型文生成のために必要な定数(UI変更しても以下の値は残す)
@@ -78,7 +79,22 @@ let THANKS_TEMPLATE             = "ありがとうございます:deep_arigatou_
         resultText = [resultText, Str:lf].join()
     }
 
-    return [resultText, openBracket, headerText, CLOSE_BRACKET_SQUARE, OPEN_BRACKET, urlText, CLOSE_BRACKET].join()
+    return [resultText, openBracket, headerText, getRankValue(urlText, '#'), CLOSE_BRACKET_SQUARE, OPEN_BRACKET, urlText, CLOSE_BRACKET].join()
+}
+
+/*
+    URLを解析して、順位を取得する
+    urlText     解析対象のURL
+    splitKey    URLのデリミタ
+*/
+@getRankValue(urlText, splitKey){
+    splitText = urlText.split(splitKey)
+
+    if (splitText.len != 2) {
+        return ""
+    }
+
+    return [" 第", splitText[1], "位"].join()
 }
 
 /*==================== UI定義 ====================*/
