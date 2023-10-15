@@ -1,0 +1,28 @@
+var nowDate         = Date:day()
+var mod             = 0
+var showText        = ""
+// 定型文
+let HEADER          = ":buruaka: 今日の指名手配："
+// 指名手配項目
+let WANTEDS         = ["ハイウェイ", "線路", "校舎"]
+// 描画間隔https://skeb.jp/
+let INTERVAL_SEC    = 1
+
+@updateText(){
+    nowDate = Date:day()
+    showText = ""
+
+    mod = nowDate % 3
+    showText = [HEADER, WANTEDS[mod]].join()
+
+    Ui:render([
+        Ui:C:mfm({
+            text: showText // 表示するテキスト
+        })
+    ])
+
+    // テキスト更新
+    Async:timeout(INTERVAL_SEC, @(){updateText()})
+}
+
+updateText()

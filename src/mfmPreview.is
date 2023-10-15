@@ -1,0 +1,14 @@
+Ui:render([
+    Ui:C:textarea({
+        onInput: @(text){
+           // Ui:get("counter").update({text: text.len})
+            Ui:get("result").update({text: text})
+            } // 入力された時のイベント
+    })
+
+    Ui:C:mfm({
+      } "counter" )
+
+    Ui:C:mfm({
+      } "result" )
+])

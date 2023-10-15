@@ -1,0 +1,155 @@
+/*==================== メタデータ ====================*/
+### {
+  name: "ランクイン定型文生成ウィジェット"
+  version: 1
+}
+
+/*==================== 変数 ====================*/
+// 定型文生成のために必要な変数(UI変更しても以下の値は残す)
+var resultText      = ""
+var showPreview     = true
+var openBracket     = ""
+
+// 本UIでの挙動に必要な変数
+var rookieText              = ""
+var illustrationRookieText  = ""
+var maleText                = ""
+var femaleText              = ""
+var localText               = ""
+var localValue              = "(北海道・東北)"
+var joinedLocal             = ""
+
+/*==================== 定数 ====================*/
+// 定型文生成のために必要な定数(UI変更しても以下の値は残す)
+let OPEN_BRACKET                    = "("       // URL用開きかっこ
+let OPEN_BRACKET_WITH_PREVIEW       = "["       // プレビューありURL用開きかっこ
+let OPEN_BRACKET_WITHOUT_PREVIEW    = "?["      // プレビューなしURL用開きかっこ
+let CLOSE_BRACKET                   = ")"       // 閉じかっこ(小かっこ)
+let CLOSE_BRACKET_SQUARE            = "]"       // 閉じかっこ(大かっこ)
+
+// 本UIでの挙動に必要な定数
+let PIXIV_EMOJI                 = ":pixiv:"                                             // pixivカスタム絵文字
+let ROOKIE_HEADER               = "ルーキーランキング"                                  // ルーキーランキング用定型文
+let ILLUSTRATION_ROOKIE_HEADER  = "イラストルーキーランキング"                          // イラストルーキーランキング用定型文
+let MALE_HEADER                 = "男性に人気ランキング"                                // 男性に人気ランキング定型文
+let FEMALE_HEADER               = "女性に人気ランキング"                                // 女性に人気ランキング定型文
+let LOCAL_HEADER                = "地方ランキング"                                      // 地方ランキング定型文
+let THANKS_TEMPLATE             = "ありがとうございます:deep_arigatou_hukakukansya:"    // 末尾定型文
+
+/*
+    投稿用の定型文を生成する
+*/
+@createNoteText(){
+    resultText = ""
+    joinedLocal = [LOCAL_HEADER, localValue].join()
+    resultText = createUrlText(resultText, ROOKIE_HEADER,               rookieText)
+    resultText = createUrlText(resultText, ILLUSTRATION_ROOKIE_HEADER,  illustrationRookieText)
+    resultText = createUrlText(resultText, MALE_HEADER,                 maleText)
+    resultText = createUrlText(resultText, FEMALE_HEADER,               femaleText)
+    resultText = createUrlText(resultText, joinedLocal,                 localText)
+
+    if (resultText == "") {
+        resultText = "何も入力されていません！"
+    } else {
+        resultText = ["```", Str:lf, PIXIV_EMOJI, Str:lf, resultText, Str:lf, THANKS_TEMPLATE, Str:lf, "```"].join()
+    }
+
+    Ui:get("result").update({text: resultText})
+}
+
+/*
+    リンクテキストを生成する
+    resultText  生成前の時点での結果(ここに付け足す)
+    headerText  リンク化する定型文
+    urlText     リンク先のURL
+*/
+@createUrlText(resultText, headerText, urlText){
+    if (urlText == "") {
+        return resultText
+    }
+
+    if (showPreview) {
+        openBracket = OPEN_BRACKET_WITH_PREVIEW
+    } else {
+        openBracket = OPEN_BRACKET_WITHOUT_PREVIEW
+    }
+
+    if (resultText != "") {
+        resultText = [resultText, Str:lf].join()
+    }
+
+    return [resultText, openBracket, headerText, CLOSE_BRACKET_SQUARE, OPEN_BRACKET, urlText, CLOSE_BRACKET].join()
+}
+
+/*==================== UI定義 ====================*/
+Ui:render([
+
+    Ui:C:folder({
+        children: [
+
+            Ui:C:switch({
+                onChange:   @(enabled) { showPreview = enabled }
+                default:    true
+                label:      "リンクプレビューを表示する"
+            })
+
+            Ui:C:textInput({
+                default:     ""
+                onInput:    @(text){ rookieText = text }
+                label:      "ﾙｰｷｰﾗﾝｷﾝｸﾞ"
+            } "rookieRankingTextInput")
+
+            Ui:C:textInput({
+                default:    ""
+                onInput:    @(text){ illustrationRookieText = text }
+                label:      "ｲﾗｽﾄﾙｰｷｰﾗﾝｷﾝｸﾞ"
+            } "illustrationRookieRankingTextInput")
+
+            Ui:C:textInput({
+                default:    ""
+                onInput:    @(text){ maleText = text }
+                label:      "男性に人気ﾗﾝｷﾝｸﾞ"
+            } "maleRankingTextInput")
+
+            Ui:C:textInput({
+                default:    ""
+                onInput:    @(text){ femaleText = text }
+                label:      "女性に人気ﾗﾝｷﾝｸﾞ"
+            } "femaleRankingTextInput")
+
+            Ui:C:textInput({
+                default:    ""
+                onInput:    @(text){ localText = text }
+                label:      "地方ﾗﾝｷﾝｸﾞ"
+            } "localRankingTextInput")
+
+            Ui:C:select({
+                items: [ // 選択肢の配列
+                    {text: "北海道・東北",  value: "(北海道・東北)"}
+                    {text: "関東",          value: "(関東)"}
+                    {text: "中部",          value: "(中部)"}
+                    {text: "近畿",          value: "(近畿)"}
+                    {text: "中国・四国",    value: "(中国・四国)"}
+                    {text: "九州・沖縄",    value: "(九州・沖縄)"}
+                    {text: "海外",          value: "(海外)"}
+                ]
+                onChange: @(value){ localValue = value } // 変更された時のイベント
+                default:    "(北海道・東北)"
+                label:      "該当地方を選択"
+            })
+
+            Ui:C:button({
+                text:       "投稿文を生成"
+                onClick:    @(){createNoteText()}
+                primary:    false // 色を付けて強調
+                rounded:    false // 角を丸く
+                disabled:   false // 無効化
+            })
+
+            Ui:C:mfm({
+            } "result" )
+        ]
+        title:  "ランクイン定型文"
+        opened: false // 開いているか
+    })
+])
