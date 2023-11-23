@@ -7,7 +7,7 @@
 /*==================== 変数 ====================*/
 // 定型文生成のために必要な変数(UI変更しても以下の値は残す)
 var resultText      = ""
-var showPreview     = true
+var showPreview     = false
 var openBracket     = ""
 
 // 本UIでの挙動に必要な変数
@@ -108,7 +108,7 @@ Ui:render([
             Ui:C:mfm({
             } "result" )
         ]
-        title: "ランクイン定型文"
+        title: "作品投稿定型文生成"
         opened: false // 開いているか
     })
 ])
