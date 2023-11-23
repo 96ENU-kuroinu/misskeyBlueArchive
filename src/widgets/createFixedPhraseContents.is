@@ -13,6 +13,7 @@ var openBracket     = ""
 // 本UIでの挙動に必要な変数
 var pixivText       = ""
 var niconicoText    = ""
+var xfolioText      = ""
 
 /*==================== 定数 ====================*/
 // 定型文生成のために必要な定数(UI変更しても以下の値は残す)
@@ -23,8 +24,9 @@ let CLOSE_BRACKET                   = ")"       // 閉じかっこ(小かっこ)
 let CLOSE_BRACKET_SQUARE            = "]"       // 閉じかっこ(大かっこ)
 
 // 本UIでの挙動に必要な定数
-let PIXIV_HEADER            = ":pixiv:に投稿しました]("                     // pixiv用定型文
-let NICONICO_HEADER         = ":nicotta::nicotta:静画に投稿しました]("      // ニコニコ静画用定型文
+let PIXIV_HEADER            = ":pixiv:に投稿しました"                   // pixiv用定型文
+let NICONICO_HEADER         = ":nicotta::nicotta:静画に投稿しました"    // ニコニコ静画用定型文
+let XFOLIO_HEADER           = "Xfolioに投稿しました"                    // Xfolio用定型文
 
 /*
     投稿用の定型文を生成する
@@ -33,6 +35,7 @@ let NICONICO_HEADER         = ":nicotta::nicotta:静画に投稿しました](" 
     resultText = ""
     resultText = createUrlText(resultText, PIXIV_HEADER, pixivText)
     resultText = createUrlText(resultText, NICONICO_HEADER, niconicoText)
+    resultText = createUrlText(resultText, XFOLIO_HEADER, xfolioText)
 
     if (resultText == "") {
         resultText = "何も入力されていません！"
@@ -72,7 +75,7 @@ Ui:render([
         children: [
             Ui:C:switch({
             onChange:   @(enabled){ showPreview = enabled }
-            default:    true
+            default:    false
             label:      "リンクプレビューを表示する"
             })
 
@@ -87,6 +90,12 @@ Ui:render([
                 onInput:    @(text){ niconicoText = text }
                 label:      "ニコニコURL"
             } "niconicoTextInput")
+
+            Ui:C:textInput({
+                default:    ""
+                onInput:    @(text){ xfolioText = text }
+                label:      "Xfolio URL"
+            } "XfolioTextInput")
 
             Ui:C:button({
                 text:       "投稿文を生成"
