@@ -1,0 +1,57 @@
+/*==================== メタデータ ====================*/
+### {
+  name: "ルビ付き文字列生成ウィジェット"
+  version: 1
+}
+
+/*==================== 変数 ====================*/
+// 定型文生成のために必要な変数(UI変更しても以下の値は残す)
+var resultText      = ""
+
+// 本UIでの挙動に必要な変数
+var mainText    = ""
+var rubyText    = ""
+
+/*
+    投稿用に文字列を加工する
+*/
+@createTextWithRuby(){
+    if (mainText == "" || rubyText == "") {
+        resultText = "ルビを付ける文字列 または ルビが入力されていません！"
+    } else {
+        resultText = ["`$[ruby ", mainText, " ", rubyText,"]`"].join()
+    }
+
+    Ui:get("result").update({text: resultText})
+}
+
+Ui:render([
+    Ui:C:folder({
+        children: [
+            Ui:C:textInput({
+                default:     ""
+                onInput:    @(text){ mainText = text }
+                label:      "ルビを付ける文字列"
+            } "mainTextInput")
+
+            Ui:C:textInput({
+                default:    ""
+                onInput:    @(text){ rubyText = text }
+                label:      "ルビ"
+            } "rubyTextInput")
+
+            Ui:C:button({
+                text:       "ルビ付き文字を生成"
+                onClick:    @(){createTextWithRuby()}
+                primary:    false // 色を付けて強調
+                rounded:    false // 角を丸く
+                disabled:   false // 無効化
+            })
+
+            Ui:C:mfm({
+            } "result" )
+        ]
+        title: "ルビ付き文字列生成"
+        opened: false // 開いているか
+    })
+])
