@@ -1,0 +1,67 @@
+/*==================== メタデータ ====================*/
+### {
+  name: "吹き出し付きテキスト生成ウィジェット"
+  version: 1
+}
+
+/*==================== 変数 ====================*/
+var baloonValue = ":left_side_balloon_with_tail: ,:right_side_balloon_without_tail:"
+var mainText    = ""
+var resultText  = ""
+var previewText = ""
+var splitText   = []
+
+/*==================== 定数 ====================*/
+let SPLIT_KEY    = ','
+
+@createNoteText(){
+    splitText = baloonValue.split(SPLIT_KEY)
+    previewText = [splitText[0], mainText, splitText[1]].join()
+    resultText = ["```", Str:lf, previewText, Str:lf, "```"].join()
+    Ui:get("result").update({text: resultText})
+    Ui:get("preview").update({text: previewText})
+}
+
+
+/*==================== UI定義 ====================*/
+Ui:render([
+
+    Ui:C:folder({
+        children: [
+            Ui:C:select({
+                items: [ // 選択肢の配列
+                    {text: "通常(左シッポ)",    value: ":left_side_balloon_with_tail: ,:right_side_balloon_without_tail:"}
+                    {text: "通常(右シッポ)",    value: ":left_side_balloon_without_tail: ,:right_side_balloon_with_tail:"}
+                    {text: "雲(左シッポ)",      value: ":left_side_thinking_balloon_with_tail: ,:right_side_thinking_balloon_without_tail:"}
+                    {text: "雲(右シッポ)",      value: ":left_side_thinking_balloon_without_tail: ,:right_side_thinking_balloon_with_tail:"}
+                    {text: "トゲトゲ",          value: ":left_side_jagged_balloon_without_tail: ,:right_side_jagged_balloon_without_tail:"}
+                ]
+                onChange: @(value){ baloonValue = value } // 変更された時のイベント
+                default:    ":left_side_balloon_with_tail: ,:right_side_balloon_without_tail:"
+                label:      "使用する吹き出しを選択"
+            })
+
+            Ui:C:textInput({
+                default:     ""
+                onInput:    @(text){ mainText = text }
+                label:      "吹き出し内の文字"
+            } "mainTextInput")
+
+            Ui:C:button({
+                text:       "投稿文を生成"
+                onClick:    @(){createNoteText()}
+                primary:    false // 色を付けて強調
+                rounded:    false // 角を丸く
+                disabled:   false // 無効化
+            })
+
+            Ui:C:mfm({
+            } "result" )
+
+            Ui:C:mfm({
+            } "preview" )
+        ]
+        title:  "吹き出し付きテキスト"
+        opened: false // 開いているか
+    })
+])
