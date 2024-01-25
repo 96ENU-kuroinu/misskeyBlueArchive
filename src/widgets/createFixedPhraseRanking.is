@@ -36,10 +36,6 @@ let MALE_HEADER                 = "男性に人気ランキング"              
 let FEMALE_HEADER               = "女性に人気ランキング"                                // 女性に人気ランキング定型文
 let LOCAL_HEADER                = "地方ランキング"                                      // 地方ランキング定型文
 let THANKS_TEMPLATE             = "ありがとうございます:deep_arigatou_hukakukansya:"    // 末尾定型文
-let PARROT_ONE_DIGIT            = ":twinsparrot:"                                       // 001位～009位 用PARROTカスタム絵文字
-let PARROT_TWO_DIGIT            = ":parrot:"                                            // 010位～099位 用PARROTカスタム絵文字
-let PARROT_THREE_DIGIT          = ":boredparrot:"                                       // 100位～999位 用PARROTカスタム絵文字
-
 
 /*
     投稿用の定型文を生成する
@@ -98,22 +94,7 @@ let PARROT_THREE_DIGIT          = ":boredparrot:"                               
         return ""
     }
 
-    return [" 第", splitText[1], "位", getParrotEmoji(splitText[1])].join()
-}
-
-/*
-    順位の桁数に応じて、PARROT絵文字を返す
-    rankValue   順位
-*/
-@getParrotEmoji(rankValue){
-    if (rankValue.len == 1) {
-        return PARROT_ONE_DIGIT
-    }
-    if (rankValue.len == 2) {
-        return PARROT_TWO_DIGIT
-    }
-
-    return PARROT_THREE_DIGIT
+    return [" 第", splitText[1], "位"].join()
 }
 
 /*==================== UI定義 ====================*/
